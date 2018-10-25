@@ -1,6 +1,6 @@
 {
   "name": "sweet-ping",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Realtime HTTP healthchecker",
   "main": "index.js",
   "repository": "https://github.com/stukalin/sweet-ping.git",
