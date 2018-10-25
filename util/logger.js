@@ -17,8 +17,13 @@ function error(msg) {
     log(msg, 'red');
 }
 
+function warn(msg) {
+    log(msg, 'yellow');
+}
+
 module.exports = {
     success,
     info,
-    error
+    error,
+    warn
 };
