@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const moment = require('moment');
 
-function log(msg, color = 'black') {
+function log(msg, color = 'visible') {
     console.log(chalk[color](`\n[${moment().format('LTS')}] ${msg}`));
 }
 

@@ -33,13 +33,10 @@ const Pinger = {
                 sumOfGoodTimes+=reqTime;
 
                 if (!successStart) {
+                    successStart = moment();
                     info(`Received response with the code ${response.status}`);
                 } else {
                     process.stdout.write('.');
-                }
-
-                if (!successStart) {
-                    successStart = moment();
                 }
 
                 if (failureStart) {
