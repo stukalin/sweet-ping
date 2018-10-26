@@ -2,6 +2,7 @@ const axios = require('axios');
 const moment = require('moment');
 const {error, info, success, warn} = require('../util/logger');
 const sleep = require('../util/sleep');
+const chalk = require('chalk');
 
 const reportRequestTimeDevianceAtPercent = 100;
 
@@ -12,6 +13,7 @@ const Pinger = {
         let numberOfGoodRequests = 0;
         let sumOfGoodTimes = 0;
 
+        // noinspection InfiniteLoopJS
         while (true) {
             try {
                 let start = moment();
@@ -25,7 +27,7 @@ const Pinger = {
                     let avg = sumOfGoodTimes / numberOfGoodRequests;
                     let deviance = (reqTime - avg) / avg;
                     if (deviance > reportRequestTimeDevianceAtPercent / 100) {
-                        warn(`The request time was (${reqTime}ms) which is ${deviance * 100}% of average (${avg}ms)`);
+                        warn(`The request time was (${reqTime.toFixed()}ms) which is ${(deviance * 100).toFixed()}% of average (${avg.toFixed()}ms)`);
                     }
                 }
 
@@ -41,7 +43,7 @@ const Pinger = {
 
                 if (failureStart) {
                     let timeDiff = moment.duration(moment().diff(failureStart));
-                    success(`There was a website outage which lasted ~${timeDiff.asSeconds()} seconds`);
+                    success(`There was a website outage which lasted ~${timeDiff.asSeconds().toFixed()} seconds`);
                     failureStart = null;
                 }
             } catch (e) {
@@ -52,10 +54,21 @@ const Pinger = {
                         error(`Server responded with the status ${e.response.status}`);
                         successStart = null;
                     } else {
-                        process.stdout.write('.');
+                        process.stdout.write(chalk.red('.'));
                     }
-                } else {
-                    error(`There was some error ${e}`);
+                } else if(e.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    if (!failureStart) {
+                        error(`No response was received ${e.request}`);
+                        successStart = null;
+                    } else {
+                        process.stdout.write(chalk.red('.'));
+                    }
+                }
+                else {
+                    error(`There was some error ${e.message}`);
                 }
 
                 if (!failureStart) {
